@@ -24,18 +24,56 @@ one person and runs lanes; a lane is one scoped task in one repo, in its own wor
 
 ## Using the skills in Reach
 
-Reach loads skills from three places: its own platform skills (`reach-*`), skills managed for a space, and
-skills in a cloned repo's `.agents/skills/` or `.claude/skills/`, which the agent spec turns on with
-`harness.skills.workspace` (off by default). To use these:
+Reach loads skills from its own platform skills (`reach-*`), skills managed for a space, the Reach
+repositories an agent spec names in `spec.skills.repositories`, and, when the agent spec turns it on,
+the workspace. This repo is on GitHub, so it comes in through the workspace. The agent looks for workspace
+skills only in `.agents/skills/` or `.claude/skills/` in its working folder or a folder above it, so a
+clone further down isn't found on its own. Link the kit's skills into the working folder. Its working
+folder is the sandbox spec's `agentDir`, else its `workingDir`, else `/workspace`.
 
-1. Clone this repo in your sandbox spec's boot step, to `/workspace/github.com/justreach-ai/agent-kit` (see
-   [where clones go](#where-clones-go)). A shallow clone of `main` is enough.
-2. Turn on workspace skills in the agent spec.
-3. Name the router in the agent's instructions: "Load `desk-mode` at the start of each session", or
-   `lane-mode`.
+1. **Sandbox spec:** a boot step that clones this repo to `/workspace/github.com/justreach-ai/agent-kit`
+   (see [where clones go](#where-clones-go)), or pulls it when it's already there, and links its skills:
 
-A merge to `main` reaches each sandbox the next time it boots. Reach's own `reach-*` skills win any name
-collision; nothing here uses that prefix.
+   ```yaml
+   spec:
+     agentDir: /workspace
+     init:
+       - name: install-agent-kit
+         dir: /workspace
+         run: |
+           set -euo pipefail
+           kit=/workspace/github.com/justreach-ai/agent-kit
+           if [ -d "$kit/.git" ]; then
+             git -C "$kit" pull --ff-only --quiet || echo "agent-kit: kept the earlier copy" >&2
+           else
+             git clone --quiet --depth 1 https://github.com/justreach-ai/agent-kit.git "$kit"
+           fi
+           mkdir -p /workspace/.agents
+           ln -sfn "$kit/.agents/skills" /workspace/.agents/skills
+   ```
+
+2. **Agent spec:** turn on workspace skills (off by default), and name the router in the prompt:
+
+   ```yaml
+   spec:
+     skills:
+       workspace: true
+     systemPrompt: |
+       At the start of each session, load the `lane-mode` skill and follow it.
+   ```
+
+   Use `desk-mode` for an orchestrating agent. Both routers load only when named.
+
+Checked against Reach 10.86.0: its agent-spec validator accepts `spec.skills.workspace` and refuses a
+non-boolean, and its skill loader, given a working folder set up as above, finds all 38 skills here only
+when workspace skills are on.
+
+With workspace skills on, any `.agents/skills/` or `.claude/skills/` in the working folder or above it adds
+to the agent's prompt. Keep them off for an agent that clones code from people you don't trust, such as
+one that reviews outside pull requests.
+
+A merge to `main` reaches each sandbox the next time it boots. Reach's own `reach-*` skills, and the skills
+managed for a space, win any name collision; nothing here uses that prefix.
 
 To keep rules of your own, put them in a private repo the same sandbox clones: an overlay per role
 (`<org>-desk`, `<org>-lane`) that loads after the router here, plus your own principles. The overlay
