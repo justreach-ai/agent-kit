@@ -55,8 +55,8 @@ for s in ~/src/github.com/justreach-ai/agent-kit/.agents/skills/*/; do
 done
 ```
 
-The loop never replaces a skill you already have; it names each one it skips. Pull to update; the symlinks
-follow. Start a session in a role by asking for it: "use desk-mode" or "use lane-mode". Tools that read
+The loop never replaces a skill you already have; it names each one it skips. Pull to update: linked skills
+follow, and a skill added later needs the loop run again. Start a session in a role by asking for it: "use desk-mode" or "use lane-mode". Tools that read
 `.agents/skills/` can point at the clone directly.
 
 ## Where clones go
