@@ -1,9 +1,9 @@
 # Agents working with this kit
 
-This kit is for agents that build software. It holds skills today: two role routers, process skills for
-recurring jobs, and principles that each state one rule, when it applies and why. Hooks and agent
-configurations will join them. The kit suits any team running agents in Reach, or anywhere that reads
-`.agents/skills/`.
+This kit is for agents that build software. It holds skills today (two role routers, process skills for
+recurring jobs, and principles that each state one rule, when it applies and why) and a read-only
+`reviewer` agent in `.agents/agents/`. Hooks will join them. The kit suits any team running agents in
+Reach, or anywhere that reads `.agents/skills/`.
 
 ## Which router to load
 
