@@ -31,8 +31,11 @@ skills only in `.agents/skills/` or `.claude/skills/` in its working folder or a
 clone further down isn't found on its own. Link the kit's skills into the working folder. Its working
 folder is the sandbox spec's `agentDir`, else its `workingDir`, else `/workspace`.
 
-1. **Sandbox spec:** a boot step that clones this repo to `/workspace/github.com/justreach-ai/agent-kit`
-   (see [where clones go](#where-clones-go)), or pulls it when it's already there, and links its skills:
+1. **Sandbox spec:** a boot step that checks this repo out at one commit you choose, in
+   `/workspace/github.com/justreach-ai/agent-kit` (see [where clones go](#where-clones-go)), and links its
+   skills into the working folder. It fetches the commit only when it isn't there yet, so a reboot costs
+   nothing, and nothing in it fails the boot: without the commit it keeps the copy it had, or runs
+   without the kit.
 
    ```yaml
    spec:
@@ -40,17 +43,36 @@ folder is the sandbox spec's `agentDir`, else its `workingDir`, else `/workspace
      init:
        - name: install-agent-kit
          dir: /workspace
+         env:
+           # A full commit id from this repo: `git ls-remote https://github.com/justreach-ai/agent-kit main`.
+           AGENT_KIT_COMMIT: 719ac4c7aa7b0f67dba78b499a0554ba1b2db0e5
          run: |
            set -euo pipefail
            kit=/workspace/github.com/justreach-ai/agent-kit
-           if [ -d "$kit/.git" ]; then
-             git -C "$kit" pull --ff-only --quiet || echo "agent-kit: kept the earlier copy" >&2
-           else
-             git clone --quiet --depth 1 https://github.com/justreach-ai/agent-kit.git "$kit"
+           if [ ! -d "$kit/.git" ]; then
+             mkdir -p "$kit"
+             git -C "$kit" init --quiet
+             git -C "$kit" remote add origin https://github.com/justreach-ai/agent-kit.git
+           fi
+           if ! git -C "$kit" cat-file -e "${AGENT_KIT_COMMIT}^{commit}" 2>/dev/null; then
+             git -C "$kit" fetch --quiet --depth 1 origin "$AGENT_KIT_COMMIT" ||
+               echo "agent-kit: could not fetch ${AGENT_KIT_COMMIT}" >&2
+           fi
+           if ! git -C "$kit" -c advice.detachedHead=false checkout --quiet --force --detach "$AGENT_KIT_COMMIT" 2>/dev/null; then
+             echo "agent-kit: ${AGENT_KIT_COMMIT} is not available; keeping what was there before, if anything" >&2
+             exit 0
            fi
            mkdir -p /workspace/.agents
-           ln -sfn "$kit/.agents/skills" /workspace/.agents/skills
+           if [ -L /workspace/.agents/skills ] || [ ! -e /workspace/.agents/skills ]; then
+             ln -sfn "$kit/.agents/skills" /workspace/.agents/skills
+           else
+             echo "agent-kit: /workspace/.agents/skills is already a folder, so the kit is not linked" >&2
+           fi
    ```
+
+   If `/workspace/.agents/skills` is already a folder of your own, the step leaves it alone and says so:
+   link the kit's skills into it one by one instead, as [using the skills locally](#using-the-skills-locally)
+   does.
 
 2. **Agent spec:** turn on workspace skills (off by default), and name the router in the prompt:
 
@@ -66,14 +88,22 @@ folder is the sandbox spec's `agentDir`, else its `workingDir`, else `/workspace
 
 Checked against Reach 10.86.0: its agent-spec validator accepts `spec.skills.workspace` and refuses a
 non-boolean, and its skill loader, given a working folder set up as above, finds all 38 skills here only
-when workspace skills are on.
+when workspace skills are on. The boot step was run on a fresh boot, a reboot, a move to another commit,
+a commit that doesn't exist (on a fresh boot and over an earlier copy) and an existing skills folder.
 
 With workspace skills on, any `.agents/skills/` or `.claude/skills/` in the working folder or above it adds
 to the agent's prompt. Keep them off for an agent that clones code from people you don't trust, such as
 one that reviews outside pull requests.
 
-A merge to `main` reaches each sandbox the next time it boots. Reach's own `reach-*` skills, and the skills
-managed for a space, win any name collision; nothing here uses that prefix.
+**Moving to a newer kit.** Your agents run the commit you pinned, so a change here reaches them only after
+you have read it. To move: read what changed (`git log --oneline <pinned>..<new>` in a clone, or the
+compare view on GitHub), set `AGENT_KIT_COMMIT` to the new full commit id, and apply the sandbox spec. Each
+sandbox checks the new commit out the next time it boots; one already running keeps the old one until then.
+Following `main` instead (a `git pull` in the step) would put every merge here into your agents' prompts
+with no review on your side.
+
+Reach's own `reach-*` skills, and the skills managed for a space, win any name collision; nothing here uses
+that prefix.
 
 To keep rules of your own, put them in a private repo the same sandbox clones: an overlay per role
 (`<org>-desk`, `<org>-lane`) that loads after the router here, plus your own principles. The overlay
