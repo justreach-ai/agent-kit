@@ -12,7 +12,7 @@ agent configurations will join them here. It is written for teams running agents
 | Kind | Skills | Purpose |
 |---|---|---|
 | Routers | `desk-mode`, `lane-mode` | Loaded once at the start of a session. Each sends every kind of task to its process skill and lists the principles with when each applies. |
-| Process | `status-update`, `decision-options`, `delegation-brief`, `risk-ladder`, `review-severity`, `release-gates`, `pr-description`, `design-doc` | How to do one recurring job |
+| Process | `status-update`, `critical-thinking`, `strategic-thinking`, `impact-assessment`, `strategy-brief`, `decision-options`, `delegation-brief`, `risk-ladder`, `review-severity`, `release-gates`, `pr-description`, `design-doc` | How to do one recurring job |
 | Principles | `principle-*` (28) | One rule, when it applies and why, in a few lines |
 
 `.agents/skills/<name>/SKILL.md` holds each skill; `.claude/skills` is a symlink to the same folder, so
@@ -87,7 +87,7 @@ folder is the sandbox spec's `agentDir`, else its `workingDir`, else `/workspace
    Use `desk-mode` for an orchestrating agent. Both routers load only when named.
 
 Checked against Reach 10.86.0: its agent-spec validator accepts `spec.skills.workspace` and refuses a
-non-boolean, and its skill loader, given a working folder set up as above, finds all 38 skills here only
+non-boolean, and its skill loader, given a working folder set up as above, finds all 38 skills in the pinned revision only
 when workspace skills are on. The boot step was run on a fresh boot, a reboot, a move to another commit,
 a commit that doesn't exist (on a fresh boot and over an earlier copy) and an existing skills folder.
 
