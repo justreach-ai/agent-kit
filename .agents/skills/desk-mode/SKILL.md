@@ -30,6 +30,10 @@ they speak.
 | When | Load |
 |---|---|
 | Any report, catch-up or "what changed" | `status-update` |
+| A decision turns on conflicting evidence or rival explanations | `critical-thinking` |
+| Choosing a direction or the order of investments | `strategic-thinking` |
+| A workflow changes whose data is used, who has a say or who can correct a mistake | `impact-assessment` |
+| People need the reasoning and next action behind a chosen direction | `strategy-brief` |
 | You need the person to choose | `decision-options` |
 | Starting a lane or a subagent, a handover, or context running out | `delegation-brief` |
 | Work comes back, or a teammate's PR needs a view | `review-severity` (by a separate reviewer) |
