@@ -1,8 +1,8 @@
 # Agent kit
 
 A public kit for agents that build software: how to scope work, prove it, get it reviewed, merge it,
-release it and report on it, and the engineering rules that keep it safe. It holds skills today; hooks and
-agent configurations will join them here. It is written for teams running agents in
+release it and report on it, and the engineering rules that keep it safe. It holds skills and a first agent
+configuration today; hooks will join them here. It is written for teams running agents in
 [Reach](https://justreach.ai), and the skills work with any agent that reads `.agents/skills/`.
 
 ## What's here
@@ -13,11 +13,20 @@ agent configurations will join them here. It is written for teams running agents
 |---|---|---|
 | Routers | `desk-mode`, `lane-mode` | Loaded once at the start of a session. Each sends every kind of task to its process skill and lists the principles with when each applies. |
 | Process | `status-update`, `critical-thinking`, `strategic-thinking`, `impact-assessment`, `strategy-brief`, `decision-options`, `delegation-brief`, `risk-ladder`, `review-severity`, `release-gates`, `pr-description`, `design-doc` | How to do one recurring job |
-| Principles | `principle-*` (28) | One rule, when it applies and why, in a few lines |
+| Principles | `principle-*` (29) | One rule, when it applies and why, in a few lines |
 
 `.agents/skills/<name>/SKILL.md` holds each skill; `.claude/skills` is a symlink to the same folder, so
 Claude Code and other tools find them in either place. [AGENTS.md](AGENTS.md) says which router to load and
 what wins over these skills.
+
+### Agents
+
+| Agent | Purpose |
+|---|---|
+| `reviewer` | An independent, read-only review in a fresh context: it has no shell and no edit or send tools, follows `review-severity`, and asks for missing context instead of guessing |
+
+`.agents/agents/<name>.md` holds each agent configuration; `.claude/agents` is a symlink to the same folder,
+so Claude Code finds them as subagents.
 
 **Desk** and **lane** are the two roles the routers serve: a desk is an orchestrating agent that works for
 one person and runs lanes; a lane is one scoped task in one repo, in its own worktree.

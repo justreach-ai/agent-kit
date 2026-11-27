@@ -15,6 +15,8 @@ Write for the teammate reading it on their phone between meetings. The code is i
 4. **Not in this PR:** what was left out on purpose, with where it's tracked.
 5. **To run it:** the commands or steps to see it working.
 6. Keep it light. No line, file or test counts; no restating the diff.
+7. **Carried-over work:** when the PR takes over or builds on someone else's PR or branch, link it and
+   credit its author. Claim only the work that is yours.
 
 ## Team-safe
 
