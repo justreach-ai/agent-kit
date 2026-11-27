@@ -57,6 +57,7 @@ principles are indexed in `../desk-mode/SKILL.md`; they apply to lanes too.
 4. `principle-facts-are-appended`: data that changes over time, edits and rollback.
 5. `principle-fewer-concepts`: a new table, kind, flag, layer or special case.
 6. `principle-cli-before-model-tool`: a new capability for agents.
+7. `principle-one-adapter-per-external-service`: integrating several external services that do the same job.
 
 **Identity, security and privacy**
 
