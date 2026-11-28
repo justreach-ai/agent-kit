@@ -32,7 +32,7 @@ specific and win where they speak.
 ## The flow
 
 1. **Ground it:** read the real code, the governing docs and earlier decisions.
-2. **Design** when the change is load-bearing: `design-doc`.
+2. **Design** when the change is load-bearing: `design-doc`. When adapting an interaction from another app, use `interaction-patterns`. For a screen that changes while someone is using it, use `interface-state-review` to check the transition and recovery.
 3. **Build** in small conventional commits (`pr-description`).
 4. **Prove it:** `principle-evidence-before-claims`, `principle-tests-run-the-real-path`,
    `principle-delivered-means-on-the-normal-path`.
