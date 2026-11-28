@@ -12,7 +12,7 @@ configuration today; hooks will join them here. It is written for teams running 
 | Kind | Skills | Purpose |
 |---|---|---|
 | Routers | `desk-mode`, `lane-mode` | Loaded once at the start of a session. Each sends every kind of task to its process skill and lists the principles with when each applies. |
-| Process | `status-update`, `critical-thinking`, `strategic-thinking`, `impact-assessment`, `strategy-brief`, `decision-options`, `delegation-brief`, `risk-ladder`, `review-severity`, `release-gates`, `pr-description`, `design-doc` | How to do one recurring job |
+| Process | `status-update`, `critical-thinking`, `strategic-thinking`, `impact-assessment`, `strategy-brief`, `decision-options`, `delegation-brief`, `risk-ladder`, `review-severity`, `release-gates`, `pr-description`, `design-doc`, `interaction-patterns`, `interface-state-review` | How to do one recurring job |
 | Principles | `principle-*` (29) | One rule, when it applies and why, in a few lines |
 
 `.agents/skills/<name>/SKILL.md` holds each skill; `.claude/skills` is a symlink to the same folder, so

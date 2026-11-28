@@ -40,6 +40,8 @@ they speak.
 | Deciding whether a lane's action needs the person | `risk-ladder`, `principle-decide-craft-bring-policy` |
 | A merge | `principle-merge-gate-on-current-head` |
 | A release | `release-gates` |
+| Translating a reference interaction into an app task | `interaction-patterns` |
+| Checking how a screen behaves across state changes | `interface-state-review` |
 | A design to weigh | `design-doc` |
 | A PR, review comment or commit to draft | `pr-description` |
 
